@@ -29,7 +29,14 @@ jobs:
       #   run: docker login --username "${{ secrets.DOCKERHUB_USERNAME }}" --password "${{ secrets.DOCKERHUB_PASSWORD }}"
       - name: build iso image
         run: earthly +all-arm-generic --FAMILY=ubuntu --FLAVOR=ubuntu --FLAVOR_RELEASE=24.04 --BASE_IMAGE=ubuntu:24.04 --VARIANT=standard
+      - name: List files
+        run: ls -lah /build
+      - name: List files
+        run: ls -lah build
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          path: /build
+          path: |
+            build/*.iso
+            build/*.sha256
+          if-no-files-found: error
