@@ -1,0 +1,29 @@
+name: Kairos buolder
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  KAIROS_VERSION: v3.1.1
+
+jobs:
+  tests:
+    name: example earthly test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: earthly/actions-setup@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          version: ^0.8.0
+      - uses: actions/checkout@v4
+        with:
+          repository: kairos-io/kairos
+          ref: ${{ env.KAIROS_VERSION }}
+      # - name: Docker login # to avoid dockerhub rate-limiting
+      #   run: docker login --username "${{ secrets.DOCKERHUB_USERNAME }}" --password "${{ secrets.DOCKERHUB_PASSWORD }}"
+      - name: what version is installed?
+        run: earthly --version
+      - name: run the earthly hello world
+        run: earthly +all-arm-generic --FAMILY=ubuntu --FLAVOR=ubuntu --FLAVOR_RELEASE=24.04 --BASE_IMAGE=ubuntu:24.04 --VARIANT=standard
