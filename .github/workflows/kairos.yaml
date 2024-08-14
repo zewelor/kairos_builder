@@ -7,6 +7,7 @@ on:
 
 env:
   KAIROS_VERSION: v3.1.1
+  FLAVOR: ubuntu
 
 jobs:
   image-builder:
@@ -28,7 +29,7 @@ jobs:
       # - name: Docker login # to avoid dockerhub rate-limiting
       #   run: docker login --username "${{ secrets.DOCKERHUB_USERNAME }}" --password "${{ secrets.DOCKERHUB_PASSWORD }}"
       - name: build iso image
-        run: earthly +all-arm-generic --FAMILY=ubuntu --FLAVOR=ubuntu --FLAVOR_RELEASE=24.04 --BASE_IMAGE=ubuntu:24.04 --VARIANT=standard
+        run: earthly +all-arm-generic --FAMILY=ubuntu --FLAVOR=${{ env.FLAVOR }} --FLAVOR_RELEASE=24.04 --BASE_IMAGE=${{ env.FLAVOR }}:24.04 --VARIANT=standard
       - name: List files
         run: ls -lah build || true
       - name: Show file content
@@ -36,10 +37,21 @@ jobs:
           cat build/IMAGE
           cat build/VERSION
           cat build/versions.yaml
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          path: |
-            build/*.iso
-            build/*.sha256
-          if-no-files-found: error
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Retag and push image
+        run: |
+          export _NEW_TAG=ghcr.io/${{ github.repository }}/${{ env.FLAVOR }}-$(cat build/VERSION | cut -f2 -d:)
+          docker tag $(cat build/IMAGE) $_NEW_TAG
+          docker push $_NEW_TAG
+      # - name: Upload artifacts
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     path: |
+      #       build/*.iso
+      #       build/*.sha256
+      #     if-no-files-found: error
