@@ -30,9 +30,11 @@ jobs:
       - name: build iso image
         run: earthly +all-arm-generic --FAMILY=ubuntu --FLAVOR=ubuntu --FLAVOR_RELEASE=24.04 --BASE_IMAGE=ubuntu:24.04 --VARIANT=standard
       - name: List files
-        run: ls -lah /build
+        run: ls -lah /
       - name: List files
-        run: ls -lah build
+        run: ls -lah build || true
+      - name: List files in current directory
+        run: ls -lah
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
