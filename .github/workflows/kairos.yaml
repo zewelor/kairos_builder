@@ -9,8 +9,8 @@ env:
   KAIROS_VERSION: v3.1.1
 
 jobs:
-  tests:
-    name: example earthly test
+  image-builder:
+    name: Build Kairos image
     runs-on: ubuntu-latest
     steps:
       - uses: earthly/actions-setup@v1
