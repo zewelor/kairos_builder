@@ -1,4 +1,4 @@
-name: Kairos buolder
+name: Kairos builder
 
 on:
   push:
@@ -21,6 +21,10 @@ jobs:
         with:
           repository: kairos-io/kairos
           ref: ${{ env.KAIROS_VERSION }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
       # - name: Docker login # to avoid dockerhub rate-limiting
       #   run: docker login --username "${{ secrets.DOCKERHUB_USERNAME }}" --password "${{ secrets.DOCKERHUB_PASSWORD }}"
       - name: what version is installed?
