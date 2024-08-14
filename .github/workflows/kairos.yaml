@@ -22,12 +22,13 @@ jobs:
           repository: kairos-io/kairos
           ref: ${{ env.KAIROS_VERSION }}
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
         with:
           platforms: all
       # - name: Docker login # to avoid dockerhub rate-limiting
       #   run: docker login --username "${{ secrets.DOCKERHUB_USERNAME }}" --password "${{ secrets.DOCKERHUB_PASSWORD }}"
-      - name: what version is installed?
-        run: earthly --version
-      - name: run the earthly hello world
+      - name: build iso image
         run: earthly +all-arm-generic --FAMILY=ubuntu --FLAVOR=ubuntu --FLAVOR_RELEASE=24.04 --BASE_IMAGE=ubuntu:24.04 --VARIANT=standard
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "/build/*"
