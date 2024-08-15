@@ -46,6 +46,7 @@ jobs:
           # echo $_NEW_TAG
           # docker tag $(cat build/IMAGE) $_NEW_TAG
           export _NEW_TAG=ghcr.io/${{ github.repository }}/busybox:latest
+          docker pull busybox:latest
           docker tag busybox:latest $_NEW_TAG
           docker push $_NEW_TAG
       # - name: Upload artifacts
